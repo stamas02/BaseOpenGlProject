@@ -16,14 +16,16 @@ public:
 	void setObjectScaleMatrix(glm::mat4 objectScaleMatrix);
 
 	//getters
-	const glm::vec3 getPosition() const;
-	const glm::vec3 getForwardVector() const;
-	const glm::vec3 getBackwardVector() const;
-	const glm::vec3 getRightVector() const;
-	const glm::vec3 getLeftVector() const;
-	const glm::mat4 getWorldTransformationMatrix() const;
-	const glm::mat4 getWorldProjectionMatrix() const;
-	const glm::mat4 getWorldRotationMatrix() const;
+	const virtual glm::vec3 getPosition() const;
+	const virtual glm::vec3 getForwardVector() const;
+	const virtual glm::vec3 getBackwardVector() const;
+	const virtual glm::vec3 getUpVector() const;
+	const virtual glm::vec3 getDownVector() const;
+	const virtual glm::vec3 getRightVector() const;
+	const virtual glm::vec3 getLeftVector() const;
+	const virtual glm::mat4 getObjectTransformationMatrix() const;
+	const virtual glm::mat4 getObjectScaleMatrix() const;
+	const virtual glm::mat4 getObjectRotationMatrix() const;
 
 
 	virtual void moveForward(float scalar);
@@ -42,7 +44,6 @@ protected:
 	glm::mat4 objectScaleMatrix;
 	glm::vec3 position;
 	glm::vec3 forward;
-	glm::vec3 right;
 	glm::vec3 up;
 };
 

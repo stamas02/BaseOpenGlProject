@@ -11,7 +11,7 @@ uniform mat4 worldrotationMatrix;
 
 void main()
 {
-	vec4 newpos = worldprojectionMatrix * worldrotationMatrix * worldTransformMatrix  *position;
+	vec3 newpos = worldprojectionMatrix * worldrotationMatrix * worldTransformMatrix  * position;
 	gl_Position = newpos;
 	
 	fcolour = colour;

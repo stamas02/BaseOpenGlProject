@@ -24,10 +24,16 @@
     <ClCompile Include="AACamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AAModelLoader.cpp">
+    <ClCompile Include="AAEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AAInput.cpp">
+    <ClCompile Include="AAObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AAWorld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AAModelFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -46,10 +52,13 @@
     <ClInclude Include="AACamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AAModelLoader.h">
+    <ClInclude Include="AAObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AAInput.h">
+    <ClInclude Include="AAWorld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AAModelFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

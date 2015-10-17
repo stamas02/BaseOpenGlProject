@@ -15,8 +15,8 @@ also includes the OpenGL extension initialisation*/
 
 #include <glm/gtc/type_ptr.hpp>
 #include "AACamera.h"
-#include "AAModelLoader.h"
-#include "AAInput.h"
+#include "AAModelFactory.h"
+
 
 GLuint positionBufferObject, colourObject;
 GLuint program;
@@ -38,8 +38,7 @@ Use it for all your initialisation stuff
 */
 void init(GLWrapper *glw)
 {
-	//AAModelLoader loader;
-	//auto fd = loader.LoadObj("cube.obj");
+
 	angle_x = 0;
 	angle_x_inc = 0;
 
@@ -48,115 +47,18 @@ void init(GLWrapper *glw)
 
 	// Create the vertex array object and make it current
 	glBindVertexArray(vao);
-
-	/* Define vertices for a cube in 12 triangles */
-	GLfloat vertexPositions[] =
-	{
-		-1.0f, 1.0f, -1.0f, 1.f,
-		-1.0f, -1.0f, -1.0f, 1.f,
-		1.0f, -1.0f, -1.0f, 1.f,
-
-		1.0f, -1.0f, -1.0f, 1.f,
-		1.0f, 1.0f, -1.0f, 1.f,
-		-1.0f, 1.0f, -1.0f, 1.f,
-
-		1.0f, -1.0f, -1.0f, 1.f,
-		1.0f, -1.0f, 1.0f, 1.f,
-		1.0f, 1.0f, -1.0f, 1.f,
-
-		1.0f, -1.0f, 1.0f, 1.f,
-		1.0f, 1.0f, 1.0f, 1.f,
-		1.0f, 1.0f, -1.0f, 1.f,
-
-		1.0f, -1.0f, 1.0f, 1.f,
-		-1.0f, -1.0f, 1.0f, 1.f,
-		1.0f, 1.0f, 1.0f, 1.f,
-
-		-1.0f, -1.0f, 1.0f, 1.f,
-		-1.0f, 1.0f, 1.0f, 1.f,
-		1.0f, 1.0f, 1.0f, 1.f,
-
-		-1.0f, -1.0f, 1.0f, 1.f,
-		-1.0f, -1.0f, -1.0f, 1.f,
-		-1.0f, 1.0f, 1.0f, 1.f,
-
-		-1.0f, -1.0f, -1.0f, 1.f,
-		-1.0f, 1.0f, -1.0f, 1.f,
-		-1.0f, 1.0f, 1.0f, 1.f,
-
-		-1.0f, -1.0f, 1.0f, 1.f,
-		1.0f, -1.0f, 1.0f, 1.f,
-		1.0f, -1.0f, -1.0f, 1.f,
-
-		1.0f, -1.0f, -1.0f, 1.f,
-		-1.0f, -1.0f, -1.0f, 1.f,
-		-1.0f, -1.0f, 1.0f, 1.f,
-
-		-1.0f, 1.0f, -1.0f, 1.f,
-		1.0f, 1.0f, -1.0f, 1.f,
-		1.0f, 1.0f, 1.0f, 1.f,
-
-		1.0f, 1.0f, 1.0f, 1.f,
-		-1.0f, 1.0f, 1.0f, 1.f,
-		-1.0f, 1.0f, -1.0f, 1.f
-	};
-
-	/* Define an array of colours */
-	float vertexColours[] = {
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-		0.0f, 0.0f, 1.0f, 1.0f,
-
-		0.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 1.0f, 0.0f, 1.0f,
-
-		1.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 1.0f, 0.0f, 1.0f,
-
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 0.0f, 1.0f,
-
-		1.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 1.0f,
-
-		0.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f, 1.0f,
-		0.0f, 1.0f, 1.0f, 1.0f,
-	};
-
+	
+	/*
+	AAModelLoader loader;
+	std::vector<glm::vec3> vertexPositions = AAModelLoader::LoadObj<glm::vec3, glm::vec3, glm::vec3>("cube.obj");
+	*/
 	/* Create a vertex buffer object to store vertices */
 	glGenBuffers(1, &positionBufferObject);
 	glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), vertexPositions, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), static_cast<void*>(&vertexPositions[0]), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	/* Create a vertex buffer object to store vertex colours */
-	glGenBuffers(1, &colourObject);
-	glBindBuffer(GL_ARRAY_BUFFER, colourObject);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexColours), vertexColours, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 
 	try
 	{
@@ -191,20 +93,10 @@ void display()
 	glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
 	glEnableVertexAttribArray(0);
 
-	/* glVertexAttribPointer(index, size, type, normalised, stride, pointer)
-	index relates to the layout qualifier in the vertex shader and in
-	glEnableVertexAttribArray() and glDisableVertexAttribArray() */
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, colourObject);
-	glEnableVertexAttribArray(1);
-
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)(2*sizeof(glm::vec3)));
 
 	glUniformMatrix4fv(modellTransformMatrixID, 1, GL_FALSE, &myCamera->getWorldTransformationMatrix()[0][0]);
-
 	glUniformMatrix4fv(projectionMatrixID, 1, GL_FALSE, &myCamera->getWorldProjectionMatrix()[0][0]);
-
 	glUniformMatrix4fv(RotationMatrixID, 1, GL_FALSE, &myCamera->getWorldRotationMatrix()[0][0]);
 
 
@@ -233,21 +125,23 @@ static void keyCallback(GLFWwindow* window, int k, int s, int action, int mods)
 	if (k == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	
+	
 	if (k == GLFW_KEY_UP) myCamera->moveForward(0.1f);
 	if (k == GLFW_KEY_DOWN) myCamera->moveBackward(0.1f);
 	if (k == GLFW_KEY_RIGHT) myCamera->moveRight(0.1f);
 	if (k == GLFW_KEY_LEFT) myCamera->moveLeft(0.1f);
-	
+
 }
 
 
 /* change view angle, exit upon ESC */
 static void mouseCallback(GLFWwindow* window, double x, double y)
-{
-	/*myCamera->rotateUp(10.0f);
+{/*
+	myCamera->rotateUp(10.0f);
 	myCamera->rotateDown(10.0f);
-	myCamera->rotateLeft(10.0f);*/
-	myCamera->rotateRight(x);
+	myCamera->rotateLeft(10.0f);
+	myCamera->rotateRight(10.);
+	*/
 
 }
 
@@ -272,8 +166,8 @@ int main(int argc, char* argv[])
 	glw->setErrorCallback(error_callback);
 
 	glw->setRenderer(display);
-	glw->setKeyCallback(AAInput::keyboardCallback);
-	glw->setMouseCallback(AAInput::mouseCallback);
+	glw->setKeyCallback(keyCallback);
+	glw->setMouseCallback(mouseCallback);
 	glw->setReshapeCallback(reshape);
 
 	init(glw);
