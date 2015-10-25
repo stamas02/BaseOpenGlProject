@@ -12,6 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include "AAInput.h"
 
 
 /* Constructor for wrapper object */
@@ -57,6 +58,8 @@ GLWrapper::GLWrapper(int width, int height, char *title) {
 	}
 
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, true);
+	glfwSetKeyCallback(window, AAInput::keyboardCallback);
+	glfwSetCursorPosCallback(window, AAInput::mouseCallback);
 }
 
 
@@ -82,6 +85,7 @@ int GLWrapper::eventLoop()
 	while (!glfwWindowShouldClose(window))
 	{
 		// Call function to draw your graphics
+		AAInput::lock();
 		renderer();
 
 		// Swap buffers
@@ -117,14 +121,14 @@ void GLWrapper::setReshapeCallback(void(*func)(GLFWwindow* window, int w, int h)
 void GLWrapper::setKeyCallback(void(*func)(GLFWwindow* window, int key, int scancode, int action, int mods))
 {
 	keyCallBack = func;
-	glfwSetKeyCallback(window, keyCallBack);
+
 }
 
 /* Register a callback to respond to mouse events */
 void GLWrapper::setMouseCallback(void(*func)(GLFWwindow* window, double x, double y))
 {
 	mouseCallBack = func;
-	glfwSetCursorPosCallback(window, mouseCallBack);
+
 }
 
 /* Build shaders from strings containing shader source code */

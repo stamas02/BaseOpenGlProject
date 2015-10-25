@@ -9,6 +9,8 @@
 using namespace std;
 using FaceModel = std::tuple < std::tuple <int, int, int>, std::tuple <int, int, int>, std::tuple <int, int, int> >;
 
+class AAModel;
+
 struct VectorData
 {
 public:
@@ -27,12 +29,14 @@ public:
 	AAModelFactory();
 	~AAModelFactory();
 
-	static std::vector<glm::vec3> LoadObj(const char*);
+	std::vector<AAModel*> CreateModel(const char* filePath, AAModel* root);
 
 private:	
 
+	void buildChildParentTransformations(std::vector<AAModel*> childs, AAModel* parent);
+
+
 	template<class T>
-	static T stringToVector(string svector);
 	static FaceModel stringToFace(string sface);
 	static std::vector<glm::vec3> convertToPureVertecies(std::vector<glm::vec4>& vertices,
 		std::vector<glm::vec2>& uvs,

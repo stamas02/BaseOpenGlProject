@@ -8,6 +8,7 @@ if you prefer */
 also includes the OpenGL extension initialisation*/
 #include "wrapper_glfw.h"
 #include <iostream>
+#include <stack>
 
 /* GLM core */
 #include <glm/glm.hpp>
@@ -16,7 +17,8 @@ also includes the OpenGL extension initialisation*/
 #include <glm/gtc/type_ptr.hpp>
 #include "AACamera.h"
 #include "AAModelFactory.h"
-
+#include "AAModel.h"
+#include "MainScene.h"
 
 GLuint positionBufferObject, colourObject;
 GLuint program;
@@ -26,11 +28,24 @@ GLuint vao;
 GLfloat angle_x, angle_x_inc;
 
 /* Uniforms*/
-GLuint modellTransformMatrixID;
-GLuint projectionMatrixID;
-GLuint RotationMatrixID;
+GLuint wolrdTransformMatrixID;
+GLuint wolrdProjectionMatrixID;
+GLuint wolrdRotationMatrixID;
 
-AACamera* myCamera;
+GLuint modelMatrixID;
+
+MainScene* scene;
+
+struct StackObj
+{
+	StackObj(AAModel* model, glm::mat4 modelMatrix)
+	{
+		this->model = model;
+		this->modelMatrix = modelMatrix;
+	}
+	AAModel* model;
+	glm::mat4 modelMatrix;
+};
 
 /*
 This function is called before entering the main rendering loop.
@@ -48,17 +63,14 @@ void init(GLWrapper *glw)
 	// Create the vertex array object and make it current
 	glBindVertexArray(vao);
 	
+	scene = new MainScene();
+
 	/*
-	AAModelLoader loader;
-	std::vector<glm::vec3> vertexPositions = AAModelLoader::LoadObj<glm::vec3, glm::vec3, glm::vec3>("cube.obj");
+	AAModelFactory modelFactory;
+
+	modelFactory.CreateModel("cube.obj", &model);
+	std::vector<glm::vec4> vertexPositions = model->getVerecies();
 	*/
-	/* Create a vertex buffer object to store vertices */
-	glGenBuffers(1, &positionBufferObject);
-	glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexPositions), static_cast<void*>(&vertexPositions[0]), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
 
 	try
 	{
@@ -72,16 +84,19 @@ void init(GLWrapper *glw)
 	}
 
 	glEnable(GL_DEPTH_TEST);
-	modellTransformMatrixID = glGetUniformLocation(program, "worldTransformMatrix");
-	projectionMatrixID = glGetUniformLocation(program, "worldprojectionMatrix");
-	RotationMatrixID = glGetUniformLocation(program, "worldrotationMatrix");
-	myCamera = new AACamera();
+	wolrdTransformMatrixID = glGetUniformLocation(program, "worldTransformMatrix");
+	wolrdProjectionMatrixID = glGetUniformLocation(program, "worldProjectionMatrix");
+	wolrdRotationMatrixID = glGetUniformLocation(program, "worldRotationMatrix");
+
+	modelMatrixID = glGetUniformLocation(program, "modelMatrix");
+	
 }
 
 //Called to update the display.
 //You should call glfwSwapBuffers() after all of your rendering to display what you rendered.
 void display()
 {
+	scene->update();
 	/* Define the background colour */
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -90,18 +105,36 @@ void display()
 
 	glUseProgram(program);
 
-	glBindBuffer(GL_ARRAY_BUFFER, positionBufferObject);
-	glEnableVertexAttribArray(0);
+	const std::vector<AAModel*> modells = scene->getModels();
+	const AACamera* camera = scene->getAciveCamera();
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)(2*sizeof(glm::vec3)));
-
-	glUniformMatrix4fv(modellTransformMatrixID, 1, GL_FALSE, &myCamera->getWorldTransformationMatrix()[0][0]);
-	glUniformMatrix4fv(projectionMatrixID, 1, GL_FALSE, &myCamera->getWorldProjectionMatrix()[0][0]);
-	glUniformMatrix4fv(RotationMatrixID, 1, GL_FALSE, &myCamera->getWorldRotationMatrix()[0][0]);
-
-
-	
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glUniformMatrix4fv(wolrdTransformMatrixID, 1, GL_FALSE, &camera->getWorldTransformationMatrix()[0][0]);
+	glUniformMatrix4fv(wolrdProjectionMatrixID, 1, GL_FALSE, &camera->getWorldProjectionMatrix()[0][0]);
+	glUniformMatrix4fv(wolrdRotationMatrixID, 1, GL_FALSE, &camera->getWorldRotationMatrix()[0][0]);
+	std::stack<StackObj *> model_stack;
+	for (AAModel* model : modells){
+		model_stack.push(new StackObj(model,
+			model->getObjectTransformationMatrix()*
+			model->getObjectRotationMatrix()));
+		while (model_stack.size() > 0)
+		{
+			StackObj * current_model_item = model_stack.top();
+			model_stack.pop();
+			AAModel* current_model = current_model_item->model;
+			current_model->prepareToBeDrawn();
+			glUniformMatrix4fv(modelMatrixID, 1, GL_FALSE, &current_model_item->modelMatrix[0][0]);
+			//if (strcmp(current_model->getName(),"body") != 0)
+				glDrawArrays(GL_TRIANGLES, 0, current_model->getSize());
+			vector<AAModel * > all_children = current_model->getChildren();
+			for (AAModel* child : all_children){
+				model_stack.push(new StackObj(child,
+					current_model_item->modelMatrix*child->getObjectTransformationMatrix()*child->getObjectRotationMatrix()
+					));
+			}
+			delete current_model_item;
+			
+		}
+	}
 
 	glDisableVertexAttribArray(0);
 	glUseProgram(0);
@@ -125,23 +158,14 @@ static void keyCallback(GLFWwindow* window, int k, int s, int action, int mods)
 	if (k == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	
-	
-	if (k == GLFW_KEY_UP) myCamera->moveForward(0.1f);
-	if (k == GLFW_KEY_DOWN) myCamera->moveBackward(0.1f);
-	if (k == GLFW_KEY_RIGHT) myCamera->moveRight(0.1f);
-	if (k == GLFW_KEY_LEFT) myCamera->moveLeft(0.1f);
 
 }
 
 
 /* change view angle, exit upon ESC */
 static void mouseCallback(GLFWwindow* window, double x, double y)
-{/*
-	myCamera->rotateUp(10.0f);
-	myCamera->rotateDown(10.0f);
-	myCamera->rotateLeft(10.0f);
-	myCamera->rotateRight(10.);
-	*/
+{
+
 
 }
 

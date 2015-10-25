@@ -1,8 +1,9 @@
 #include "AAObject.h"
 #include "AAWorld.h"
 
-AAObject::AAObject()
+AAObject::AAObject(const char *name)
 {
+	this->name = name;
 	glm::mat4 modelTransformationMatrix;
 	glm::mat4 projectionMatrix;
 	this->objectTransformationMatrix = glm::translate(glm::mat4(1.f), glm::vec3(0.0f, 0.0f, 0.0f));
@@ -90,6 +91,10 @@ const glm::mat4 AAObject::getObjectRotationMatrix() const
 	return this->objectRotationMatrix;
 }
 
+const char * AAObject::getName()
+{
+	return this->name;
+}
 
 
 //Member function **********************************************************
@@ -115,8 +120,8 @@ void AAObject::rotate(float degree, glm::vec3 vect)
 	
 	this->forward = glm::mat3(glm::rotate(degree, vect)) * this->forward;
 	this->up = glm::mat3(glm::rotate(degree, vect)) * this->up;
-	this->objectRotationMatrix = glm::rotate(-degree, vect)*this->objectRotationMatrix;
-	
+	this->objectRotationMatrix = glm::rotate(degree, vect)*this->objectRotationMatrix;
+	//this->objectRotationMatrix = glm::lookAt(this->getPosition(), this->getForwardVector() - this->getPosition(), this->up);
 }
 
 void AAObject::rotateUp(float degree)
@@ -131,10 +136,11 @@ void AAObject::rotateDown(float degree)
 
 void AAObject::rotateLeft(float degree)
 {
-	this->rotate(degree, this->getLeftVector());
+	this->rotate(degree, this->getUpVector());
 }
 
 void AAObject::rotateRight(float degree)
 {
-	this->rotate(-degree, this->getLeftVector());
+	this->rotate(-degree, this->getUpVector());
 }
+

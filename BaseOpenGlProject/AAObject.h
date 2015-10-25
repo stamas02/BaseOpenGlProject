@@ -2,11 +2,12 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
+#include <vector>
 
 class AAObject
 {
 public:
-	AAObject();
+	AAObject(const char *name);
 	~AAObject();
 
 	//setters
@@ -28,6 +29,7 @@ public:
 	const virtual glm::mat4 getObjectRotationMatrix() const;
 
 
+
 	virtual void moveForward(float scalar);
 	virtual void moveBackward(float scalar);
 	virtual void moveLeft(float scalar);
@@ -37,6 +39,9 @@ public:
 	virtual void rotateDown(float degree);
 	virtual void rotateLeft(float degree);
 	virtual void rotateRight(float degree);
+	virtual void update() = 0;
+
+	const char * getName();
 
 protected:
 	glm::mat4 objectTransformationMatrix;
@@ -45,5 +50,8 @@ protected:
 	glm::vec3 position;
 	glm::vec3 forward;
 	glm::vec3 up;
+
+private:
+	const char* name;
 };
 

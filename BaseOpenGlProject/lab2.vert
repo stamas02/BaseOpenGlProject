@@ -2,18 +2,22 @@
 
 #version 400
 layout(location = 0) in vec4 position;
-layout(location = 1) in vec4 colour;
+
 out vec4 fcolour;
 
 uniform mat4 worldTransformMatrix;
-uniform mat4 worldprojectionMatrix;
-uniform mat4 worldrotationMatrix;
+uniform mat4 worldProjectionMatrix;
+uniform mat4 worldRotationMatrix;
+
+uniform mat4 modelMatrix;
 
 void main()
 {
-	vec3 newpos = worldprojectionMatrix * worldrotationMatrix * worldTransformMatrix  * position;
-	gl_Position = newpos;
+	vec4 local_new_pos =  modelMatrix * position;
+	vec4 world_new_pos = worldProjectionMatrix * worldRotationMatrix * worldTransformMatrix  * local_new_pos;
+
+	gl_Position = world_new_pos;
 	
-	fcolour = colour;
+	fcolour = vec4(0.3f,0.3f,0.3f,1.0f);
 	//fcolour = position * 2.0 + vec4(0.5, 0.5, 0.5, 1.0);
 }

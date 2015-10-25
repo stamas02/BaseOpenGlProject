@@ -69,10 +69,16 @@
   <ItemGroup>
     <ClCompile Include="AACamera.cpp" />
     <ClCompile Include="AAEvent.cpp" />
+    <ClCompile Include="AAHelper.cpp" />
+    <ClCompile Include="AAInput.cpp" />
+    <ClCompile Include="MainScene.cpp" />
+    <ClCompile Include="AAModel.cpp" />
     <ClCompile Include="AAModelFactory.cpp" />
     <ClCompile Include="AAObject.cpp" />
+    <ClCompile Include="AAScene.cpp" />
     <ClCompile Include="AAWorld.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyCube.cpp" />
     <ClCompile Include="wrapper_glfw.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -81,9 +87,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AACamera.h" />
+    <ClInclude Include="AAHelper.h" />
+    <ClInclude Include="AAInput.h" />
+    <ClInclude Include="MainScene.h" />
+    <ClInclude Include="AAModel.h" />
     <ClInclude Include="AAModelFactory.h" />
     <ClInclude Include="AAObject.h" />
+    <ClInclude Include="AAScene.h" />
     <ClInclude Include="AAWorld.h" />
+    <ClInclude Include="MyCube.h" />
     <ClInclude Include="wrapper_glfw.h" />
   </ItemGroup>
   <ItemGroup>
